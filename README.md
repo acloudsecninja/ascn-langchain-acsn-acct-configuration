@@ -7,7 +7,7 @@ Before you start, ensure you have the following:
     AWS Account
     AWS SDK for Python (Boto3)
     Langchain library
-    An S3 bucket with text files
+    OpenAI LLM Model Configuration / API Key
 
 
 
