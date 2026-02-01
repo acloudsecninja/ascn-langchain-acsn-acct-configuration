@@ -36,7 +36,7 @@ Step 3: Create a local .env file
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-# Note: These Credentials will be found in ~/.aws/credentials
+## Note: These Credentials will be found in ~/.aws/credentials
 
 Step 4: Configure a Python Script to setup boto3 (AWS) and Langchain and Import OPENAI Model with specfic commands at python script ./run
 
