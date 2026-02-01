@@ -1,6 +1,8 @@
 # ascn-langchain-acsn-acct-configuration
 
-Purpose: This code will setup an agent that can interface with AWS services and process text using an OpenAI model and give information based on the AWS account in question.
+## Python pull-info-from-aws-acct.py Steps ## 
+
+Purpose: This code will pull directly from AWS APIs and pull down the requested information using python scripts.
 
 ## Prerequisites
 
@@ -10,6 +12,8 @@ Before you start, ensure you have the following:
     AWS SDK for Python (Boto3)
     Langchain library
     OpenAI LLM Model Configuration / API Key
+    Windows 11
+    Python 3.13.9
 
 
 Step 1: On Windows Open Git Bash terminal within Visual Studio Code
@@ -32,23 +36,33 @@ region = us-east-2
 ###
 ```
 
-## Note: These Credentials will be found in ~/.aws/credentials
+## Note: These Credentials will be found in ~/.aws/credentials or .env depneding on your perferred method.
 
-Step 4: Create a local .env file on Windows (Similar for linux/mac)
+Step 4: Create a local .env file on Windows
 
-- Create a local .env file using notepad and then setup the value in your notepad and save it in your local user folder. 
+- Create a local .env file in github so you can set your OPENAIKEY
 
 OPENAI_API_KEY=your_openai_api_key_here
 
 
-## Critical_NOTE: These Credentials will be found in .env file ,but not uploaded to Github
+## Critical_NOTE: These Credentials will be found in .env file ,but not uploaded to Github since .gitignore is set
 
-Step 5: Use create_aws_chatbot.py Python Script to setup boto3 (AWS) and Langchain and Import OPENAI Model with specfic commands at python script
+Step 5: Run the command pull-info-from-aws-acct.py Python Script to setup boto3 (AWS).
 
- - Run the command to start and manage the bot.
+ - Run the command to start and manage the bot that will interact with AWS APIs.
 
  ```bash
- ./create_aws_chatbot.py
+ ./pull-info-from-aws-acct.py
+ ```
+
+OR
+
+Run the command which will use an agent to interact with AWS API services
+
+```bash
+./langchain-agent-configuration-script.py
 ```
 
-Step 6: Once the bot is created you can then run the following commands to see if the bot will respond with the information you want.
+- Created and Maintained by - A Cloud Security Ninja LLC - 
+
+- For Information contact us at @ (https://www.acloudsec.ninja/booking-calendar/free-15-minute-consultation)
