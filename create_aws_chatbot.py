@@ -2,8 +2,8 @@
 import os
 import boto3
 from dotenv import load_dotenv
-from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
 
 
 # Load .env variables from .env file
@@ -54,11 +54,11 @@ def get_user_permissions(user_name):
     return [policy['PolicyName'] for policy in policies['AttachedPolicies']]
 
 # Initialize Langchain with OpenAI to ensure proper communcation
-llm = OpenAI(api_key=openai_api_key)
+llm = ChatOpenAI(api_key=openai_api_key)
 
 # Chat Response to process text with Langchain
 def process_text_with_langchain(text):
-    chain = LLMChain(llm=llm)
+    chain = ChatOpenAI(llm=llm)
     return chain.run(text)
 
 # Example usage for chatbot commands
