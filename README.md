@@ -16,8 +16,7 @@ Before you start, ensure you have the following:
 Step 1: Install Required Libraries
 
 ```bash
-pip install boto3 langchain
-pip install python-dotenv
+pip install -r requirements.txt
 ```
 
 Step 2: Setup AWS Credentials
@@ -28,7 +27,7 @@ Step 2: Setup AWS Credentials
 [default]
 aws_access_key_id = YOUR_ACCESS_KEY
 aws_secret_access_key = YOUR_SECRET_KEY
-region = YOUR_REGION
+region = us-east-2
 ###
 ```
 
@@ -36,86 +35,19 @@ region = YOUR_REGION
 
 Step 3: Create a local .env file on Windows (Similar for linux/mac)
 
-Create a local .env file using notepad and then setup the values as shown below
+- Create a local .env file using notepad and then setup the value in your notepad and save it in your local user folder. 
 
-```bash
 OPENAI_API_KEY=your_openai_api_key_here
-```
+
 
 ## Critical_NOTE: These Credentials will be found in .env file ,but not uploaded to Github
 
-Step 4: Configure a Python Script to setup boto3 (AWS) and Langchain and Import OPENAI Model with specfic commands at python script ./run
+Step 4: Use create_aws_chatbot.py Python Script to setup boto3 (AWS) and Langchain and Import OPENAI Model with specfic commands at python script
 
-```bash
-## Import and install the folllowing information into the python script which is ran at starting of the python script
-import os
-import boto3
-from dotenv import load_dotenv
-from langchain.chains import LLMChain
-from langchain.llms import OpenAI
+ - Run the command to start and manage the bot.
 
-# Load .env variables from .env file
-load_dotenv()
+ ```bash
+ ./create_aws_chatbot.py
+```
 
-# Get Local API key from environment variable which is setup locally on your system
-openai_api_key = os.getenv('OPENAI_API_KEY')
-
-# Initialize AWS API names
-s3 = boto3.client('s3')
-ec2 = boto3.client('ec2')
-iam = boto3.client('iam')
-
-# Chat Response to fetch file content from S3
-def fetch_file_from_s3(bucket_name, file_key):
-    response = s3.get_object(Bucket=bucket_name, Key=file_key)
-    return response['Body'].read().decode('utf-8')
-
-# Chat Response to check public buckets
-def list_public_buckets():
-    response = s3.list_buckets()
-    public_buckets = []
-
-    for bucket in response['Buckets']:
-        acl = s3.get_bucket_acl(Bucket=bucket['Name'])
-        for grant in acl['Grants']:
-            if 'URI' in grant['Grantee'] and 'AllUsers' in grant['Grantee']['URI']:
-                public_buckets.append(bucket['Name'])
-                break
-
-    return public_buckets
-
-# Chat Response to get bucket contents
-def get_bucket_contents(bucket_name):
-    response = s3.list_objects_v2(Bucket=bucket_name)
-    contents = [item['Key'] for item in response.get('Contents', [])]
-    return contents
-
-# Chat Response to get EC2 instance size
-def get_ec2_instance_size(instance_ip):
-    instances = ec2.describe_instances(Filters=[{'Name': 'private-ip-address', 'Values': [instance_ip]}])
-    instance_type = instances['Reservations'][0]['Instances'][0]['InstanceType']
-    return instance_type
-
-# Chat Response to get user permissions
-def get_user_permissions(user_name):
-    policies = iam.list_attached_user_policies(UserName=user_name)
-    return [policy['PolicyName'] for policy in policies['AttachedPolicies']]
-
-# Initialize Langchain with OpenAI
-llm = OpenAI(api_key=openai_api_key)
-
-# Chat Response to process text with Langchain
-def process_text_with_langchain(text):
-    chain = LLMChain(llm=llm)
-    return chain.run(text)
-
-# Example usage for chatbot commands
-if __name__ == "__main__":
-    public_buckets = list_public_buckets()
-    print("Public S3 Buckets:")
-    print(public_buckets)
-
-    # You can add more commands below.
-
-
-
+Step 5: Once the bot is created you can then run the following commands to see if the bot will respond with the information you want.
