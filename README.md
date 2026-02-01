@@ -1,5 +1,7 @@
 # ascn-langchain-acsn-acct-configuration
 
+Purpose: This code will setup an agent that can interface with AWS services and process text using an OpenAI model and give information based on the AWS account in question.
+
 ## Prerequisites
 
 Before you start, ensure you have the following:
@@ -30,13 +32,17 @@ region = YOUR_REGION
 ###
 ```
 
-Step 3: Create a local .env file
+## Note: These Credentials will be found in ~/.aws/credentials
+
+Step 3: Create a local .env file on Windows (Similar for linux/mac)
+
+Create a local .env file using notepad and then setup the values as shown below
 
 ```bash
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-## Note: These Credentials will be found in ~/.aws/credentials
+## Critical_NOTE: These Credentials will be found in .env file ,but not uploaded to Github
 
 Step 4: Configure a Python Script to setup boto3 (AWS) and Langchain and Import OPENAI Model with specfic commands at python script ./run
 
