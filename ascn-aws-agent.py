@@ -1,4 +1,4 @@
-# Import required libraries
+# Import required libraries to ensure the Agent works properly.
 import os
 import boto3
 import csv
@@ -10,15 +10,16 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
 from langchain_core.runnables import RunnablePassthrough
 
-# Load environment variables from .env file
+# Load environment variables from .env file which includes AWS Creds and OPENAI Key.
+# Need the billing setup for OpenAI for the agent to work.
 load_dotenv()
 
-# Fetch credentials from environment variables
+# Fetch credentials from environment variables locally using the OS imported python package.
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY')
 aws_secret_access_key = os.getenv('AWS_SECRET_KEY')
 region_name = os.getenv('REGION_NAME')
 
-# Create AWS service clients
+# Create AWS service clients to ensure the agent knows what its doing.
 ec2 = boto3.client('ec2', aws_access_key_id=aws_access_key_id, 
                    aws_secret_access_key=aws_secret_access_key, region_name=region_name)
 route53 = boto3.client('route53', aws_access_key_id=aws_access_key_id, 
@@ -26,18 +27,20 @@ route53 = boto3.client('route53', aws_access_key_id=aws_access_key_id,
 iam = boto3.client('iam', aws_access_key_id=aws_access_key_id, 
                    aws_secret_access_key=aws_secret_access_key, region_name=region_name)
 
+
+## Defined Tools being used for the Agent and how they are working within itself.
 @tool
 def aws_cli_command(command: str) -> str:
     """Execute AWS CLI commands for interacting with AWS services"""
     import subprocess
     try:
-        # Set AWS environment variables
+        # Set AWS environment variables so the Agent knows what AWS account its logging into.
         env = os.environ.copy()
         env['AWS_ACCESS_KEY_ID'] = aws_access_key_id
         env['AWS_SECRET_ACCESS_KEY'] = aws_secret_access_key
         env['AWS_DEFAULT_REGION'] = region_name
         
-        # Execute AWS CLI command
+        # Execute AWS CLI command using the credentials the AWS Agent will use.
         result = subprocess.run(['aws'] + command.split(), 
                               capture_output=True, text=True, env=env)
         
@@ -48,6 +51,10 @@ def aws_cli_command(command: str) -> str:
     except Exception as e:
         return f"Error executing AWS command: {str(e)}"
 
+
+## What the Agent will be able to do running the AWS Cli and the credentials that is being used.
+
+###START###
 @tool
 def list_route53_hosted_zones() -> str:
     """List all Route 53 hosted zones in the AWS account"""
@@ -93,14 +100,16 @@ def list_s3_buckets() -> str:
     except Exception as e:
         return f"Error listing S3 buckets: {str(e)}"
 
-# Initialize OpenAI chat model
+###END###
+
+# Determine which LLM model the Agent will be using and which credentails to use from OpenAI.
 llm = ChatOpenAI(
     model="gpt-4o-mini",
     temperature=0,
     api_key=os.environ.get("OPENAI_API_KEY")
 )
 
-# Define the prompt template
+# Define the prompt template so the agent will know what to do and how to get the answers.
 prompt = ChatPromptTemplate.from_template("""
 You are a helpful assistant that can interact with AWS services. You have access to the following tools:
 
@@ -116,9 +125,11 @@ User request: {input}
 Your response:
 """)
 
-# Create the chain
+# Create the chain which will be used to process the user's request, but in this case python is running the script and the outputs.
 chain = prompt | llm
 
+
+### Export to CSV and ZIP Files. ###
 def export_findings_to_csv(findings_data, filename="aws_findings.csv"):
     """Export AWS findings to CSV file"""
     try:
@@ -148,6 +159,8 @@ def create_zip_file(csv_file, zip_filename="aws_findings_report.zip"):
         print(f"❌ Error creating zip file: {str(e)}")
         return None
 
+
+### Test the Agent and how it works and determine if the outputs (answers) are correct. ###
 def test_aws_agent():
     """Test the AWS agent with various AWS operations and export findings"""
     test_queries = [
