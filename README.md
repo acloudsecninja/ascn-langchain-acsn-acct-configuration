@@ -1,68 +1,113 @@
-# ascn-langchain-acsn-acct-configuration
+# 🛡️ ASCN LangChain AWS Account Configuration
 
-## Python pull-info-from-aws-acct.py Steps ## 
+## 📋 Overview
 
-Purpose: This code will pull directly from AWS APIs and pull down the requested information using python scripts.
+This project provides intelligent AWS account configuration and information retrieval using LangChain agents. The solution integrates directly with AWS APIs to pull requested information through automated Python scripts with natural language processing capabilities.
 
-## Prerequisites
+## 🚀 Features
+
+- **🤖 Intelligent AWS Agent**: LangChain-powered agent for natural AWS API interactions
+- **📊 Multi-Service Support**: S3, EC2, Route53, and IAM integration
+- **📤 Automated Reporting**: CSV export and ZIP archiving of findings
+- **🔍 Comprehensive Queries**: Natural language to AWS command translation
+- **⚡ Real-time Results**: Immediate AWS data retrieval and analysis
+
+## 📋 Prerequisites
 
 Before you start, ensure you have the following:
 
-    AWS Account
-    AWS SDK for Python (Boto3)
-    Langchain library
-    OpenAI LLM Model Configuration / API Key
-    Windows 11
-    Python 3.13.9
+| Requirement | Version/Details |
+|-------------|-----------------|
+| **AWS Account** | Valid AWS account with necessary permissions |
+| **AWS SDK for Python** | Boto3 library |
+| **LangChain Library** | Latest stable version |
+| **OpenAI API** | Valid API key and configuration |
+| **Operating System** | Windows 11 |
+| **Python** | Version 3.13.9 |
 
+## 🔧 Installation & Setup
 
-Step 1: On Windows Open Git Bash terminal within Visual Studio Code
+### Step 1: Environment Setup
+Open Git Bash terminal within Visual Studio Code on Windows.
 
-Step 2: Install Required Libraries
-
+### Step 2: Install Required Libraries
 ```bash
 pip install -r requirements.txt
 ```
 
-Step 3: Setup AWS Credentials
+### Step 3: Configure AWS Credentials
 
-```bash
+Create or update your AWS credentials file (`~/.aws/credentials`):
 
-##Example Using simple AWS ACCESS and SECRET KEY
+```ini
 [default]
 aws_access_key_id = YOUR_ACCESS_KEY
 aws_secret_access_key = YOUR_SECRET_KEY
 region = us-east-2
-###
 ```
 
-## Note: These Credentials will be found in ~/.aws/credentials or .env depneding on your perferred method.
+> **📝 Note**: Credentials can also be configured via `.env` file based on your preference.
 
-Step 4: Create a local .env file on Windows
+### Step 4: Set Up Environment Variables
 
-- Create a local .env file in github so you can set your OPENAIKEY
+Create a local `.env` file in the project root:
 
+```env
 OPENAI_API_KEY=your_openai_api_key_here
+AWS_ACCESS_KEY=your_aws_access_key
+AWS_SECRET_KEY=your_aws_secret_key  
+REGION_NAME=us-east-2
+```
 
+> **⚠️ Security Notice**: The `.env` file is excluded from Git via `.gitignore` to protect sensitive credentials.
 
-## Critical_NOTE: These Credentials will be found in .env file ,but not uploaded to Github since .gitignore is set
+## 🎯 Usage
 
-Step 5: Run the command pull-info-from-aws-acct.py Python Script to setup boto3 (AWS).
-
- - Run the command to start and manage the bot that will interact with AWS APIs.
-
- ```bash
- ./pull-info-from-aws-acct.py
- ```
-
-OR
-
-Run the command which will use an AWS Agent to interact with AWS API services and return results as expected.
+### Option 1: Direct AWS API Script
+Run the traditional boto3-based script for direct AWS API interactions:
 
 ```bash
-./ascn-aws-agent.py
+python pull-info-from-aws-acct.py
 ```
 
-- Created and Maintained by - A Cloud Security Ninja LLC - 
+### Option 2: Intelligent AWS Agent (Recommended)
+Execute the LangChain-powered AWS agent for enhanced natural language processing and automated reporting:
 
-- For Information contact us at @ (https://www.acloudsec.ninja/booking-calendar/free-15-minute-consultation)
+```bash
+python ascn-aws-agent.py
+```
+
+#### 📊 Output Features
+- **Real-time Results**: Immediate console output of AWS findings
+- **CSV Export**: Structured data export to `aws_findings.csv`
+- **ZIP Archive**: Compressed findings in `aws_findings_report.zip`
+- **Timestamped Records**: All findings include execution timestamps
+
+## 🏗️ Architecture
+
+The AWS Agent supports the following services:
+- **🪣 S3**: Bucket listing and content analysis
+- **🖥️ EC2**: Instance information and sizing
+- **🌐 Route53**: Hosted zone management
+- **👤 IAM**: User permissions and policy analysis
+
+## 📈 Sample Output
+
+The agent generates comprehensive reports including:
+- Service-specific findings
+- Query execution timestamps
+- Success/failure status
+- Detailed result data
+- Error handling and logging
+
+## 🤝 Support & Maintenance
+
+**Created and Maintained by**: A Cloud Security Ninja LLC
+
+**📞 Contact & Consultation**: 
+- Website: [acloudsec.ninja](https://www.acloudsec.ninja/booking-calendar/free-15-minute-consultation)
+- Free 15-minute consultation available
+
+---
+
+*🔒 Security-focused cloud solutions for modern infrastructure*

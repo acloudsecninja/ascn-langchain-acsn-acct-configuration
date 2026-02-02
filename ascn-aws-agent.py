@@ -1,6 +1,9 @@
 # Import required libraries
 import os
 import boto3
+import csv
+import zipfile
+from datetime import datetime
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -116,14 +119,45 @@ Your response:
 # Create the chain
 chain = prompt | llm
 
+def export_findings_to_csv(findings_data, filename="aws_findings.csv"):
+    """Export AWS findings to CSV file"""
+    try:
+        with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['timestamp', 'service', 'query', 'result', 'status']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            
+            writer.writeheader()
+            for finding in findings_data:
+                writer.writerow(finding)
+        
+        print(f"\n✅ Findings exported to {filename}")
+        return filename
+    except Exception as e:
+        print(f"❌ Error exporting to CSV: {str(e)}")
+        return None
+
+def create_zip_file(csv_file, zip_filename="aws_findings_report.zip"):
+    """Create a zip file containing the CSV findings"""
+    try:
+        with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            zipf.write(csv_file)
+        
+        print(f"✅ Findings zipped to {zip_filename}")
+        return zip_filename
+    except Exception as e:
+        print(f"❌ Error creating zip file: {str(e)}")
+        return None
+
 def test_aws_agent():
-    """Test the AWS agent with various AWS operations"""
+    """Test the AWS agent with various AWS operations and export findings"""
     test_queries = [
         "List all S3 buckets in my AWS account",
         "List all Route 53 hosted zones", 
         "Get the size of EC2 instance with IP 10.0.1.112",
         "Get permissions for IAM user take-home-coding"
     ]
+    
+    findings_data = []
     
     for query in test_queries:
         try:
@@ -137,25 +171,65 @@ def test_aws_agent():
             print(result.content)
             
             # Execute relevant tool based on query
+            aws_result = "No tool executed"
+            service = "Unknown"
+            status = "Success"
+            
             if "s3" in query.lower() and "bucket" in query.lower():
                 print("\nExecuting S3 bucket listing...")
                 aws_result = list_s3_buckets.invoke({})
+                service = "S3"
                 print("Result:", aws_result)
             elif "route 53" in query.lower() or "hosted zone" in query.lower():
                 print("\nExecuting Route 53 hosted zones listing...")
                 aws_result = list_route53_hosted_zones.invoke({})
+                service = "Route53"
                 print("Result:", aws_result)
             elif "ec2" in query.lower() and "10.0.1.112" in query:
                 print("\nGetting EC2 instance size...")
                 aws_result = get_ec2_instance_size.invoke({"instance_ip": "10.0.1.112"})
+                service = "EC2"
                 print("Result:", aws_result)
             elif "iam" in query.lower() and "take-home-coding" in query.lower():
                 print("\nGetting IAM user permissions...")
                 aws_result = get_user_permissions.invoke({"user_name": "take-home-coding"})
+                service = "IAM"
                 print("Result:", aws_result)
-                
+            
+            # Collect findings data
+            finding = {
+                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'service': service,
+                'query': query,
+                'result': aws_result,
+                'status': status
+            }
+            findings_data.append(finding)
+            
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"❌ Error: {e}")
+            # Log error findings
+            error_finding = {
+                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'service': service,
+                'query': query,
+                'result': f"Error: {str(e)}",
+                'status': "Failed"
+            }
+            findings_data.append(error_finding)
+    
+    # Export findings to CSV
+    if findings_data:
+        csv_file = export_findings_to_csv(findings_data)
+        if csv_file:
+            # Create zip file
+            zip_file = create_zip_file(csv_file)
+            if zip_file:
+                print(f"\n🎉 AWS findings export complete!")
+                print(f"📁 CSV file: {csv_file}")
+                print(f"📦 Zip file: {zip_file}")
+    
+    return findings_data
 
 if __name__ == "__main__":
     print("Testing Enhanced AWS Agent...")
